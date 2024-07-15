@@ -11,6 +11,7 @@ function createGame(player1, player2){
     let turn = 1;
     const getTurnCount = () => turn;
     const increaseTurnCount = ()=> turn++;
+    const resetTurnCount = () => turn = 0;
     let gameBoard = (function (){
         let row1 = {1:"", 2:"",3:""};
         let row2 = {1:"", 2:"",3:""};
@@ -49,39 +50,40 @@ function createGame(player1, player2){
             playRound(playerTurn);
             if (gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row1[2] && gameBoard.row1[3]=== gameBoard.row1[2]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row2[1] !="" && gameBoard.row2[1]=== gameBoard.row2[2] && gameBoard.row2[3]=== gameBoard.row2[2]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row3[1] !="" && gameBoard.row3[1]=== gameBoard.row3[2] && gameBoard.row3[3]=== gameBoard.row3[2]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row2[1] && gameBoard.row2[1]=== gameBoard.row3[1]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row1[2] !="" && gameBoard.row1[2]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[2]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row1[3] !="" && gameBoard.row1[3]=== gameBoard.row2[3] && gameBoard.row2[3]=== gameBoard.row3[3]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[3]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");
             }else if(gameBoard.row1[3] !="" && gameBoard.row1[3]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[1]){
                 gameOn = false;
-                console.log("we have a WINNER");
+                console.log("We have a WINNER");               
             }else if (turn >9){
-                gameOn = false;
                 console.log("Tie Game");
+                resetTurnCount();
             }
+}increaseTurnCount();
+    if(!gameOn){
+        let winner = evalTurn()
+        winner.addWin()
     }
 }
 playGame();
 }
 
-
 let steve = createUser("Steve", "X");
 let nick = createUser("Nick", "O");
-
-createGame(steve, nick);
