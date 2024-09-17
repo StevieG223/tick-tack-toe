@@ -47,7 +47,7 @@
 /* reset complete
 */
 
-.title, .gametile, .score-display{
+.title, .gametile, .score-display, .square{
     font-family: "Roboto Slab", serif;
     font-optical-sizing: auto;
     font-style: normal;
@@ -68,27 +68,76 @@
     width: 100%;
     background-color: #0079FF;
 }
-.board{
+.gameboard{
     display: grid;
     grid-template-rows: repeat(3, 250px);
     grid-template-columns: repeat(3, 250px);
     gap: 15px;
     background-color: #0079FF;
-    margin:auto;
-
+    justify-content: center;
+    padding: 30px;;
 }
 
-.game-tile{
-    background-color: #ECF8F9;
-    border-radius: 20px;
-    margin: auto;
-    min-height: 250px;
-    min-width: 250px;
+.square{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ECF8F9;
+  border-radius: 20px;
+  margin: auto;
+  height: 250px;
+  width: 250px;
+  font-size: 40px;
+  color: #00ff88;
+  font-weight: bolder;
 }
 
-.game-tile:hover{
-    transform: scale(1.1);
-    border: #0079FF;
-    background-color: #abeef5;
+.square:hover{
+  transform: scale(1.05);
+  border: #0079FF;
+  background-color: #d5eff1;
+}
 
+.new-game-setup, .player-info{
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.new-game-button, button{
+  background-color: #0079FF;
+  color: #abeef5;
+  border-color: #abeef5;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 15px;
+  gap: 10px;
+  display: flex;
+  cursor: pointer;
+  box-shadow: 0 6px #0044ff;
+  width: 140px;
+}
+
+.start-button{
+  background-color: #00ff88;
+  color: white;
+  border-color: #abf5d5;
+  box-shadow: 0 6px #00ff88;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px #5a7f83;
+}
+
+input{
+  width: 300px;
+  border-radius: 15%;
+  background-color: #abeef554;
+}
+
+.player-info{
+  padding: 30px 0 30px 0;
 }

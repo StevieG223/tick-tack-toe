@@ -1,89 +1,117 @@
-function createUser(name, mark){
-    let playerName = name;
-    let playerMark =mark;
-    let wins =0;
-    const getWins = () => wins;
-    const addWin = () => wins++;
-    return {playerName, playerMark, getWins, addWin};
+const displayController = (() => {
+    const renderMessage = (message) =>{
+        document.querySelector(".title").innerHTML =message;
+    }
+    return{
+        renderMessage
+    }
+})();
+
+const Gameboard = (() =>{
+    let board = ["", "", "", "", "", "", "", "", ""];
+    const render = () =>{
+        let boardHTML = "";
+        board.forEach((square, index)=> {
+            boardHTML += `<div class="square" id="square-${index}">${square}</div>`
+        });
+        document.querySelector(".gameboard").innerHTML = boardHTML;
+        let squares = document.querySelectorAll(".square")
+        squares.forEach((square )=>{
+            square.addEventListener("click", Game.clickEventHandler)
+        })        
+    }
+    const getGameboard = ()=> board;
+    const update = (index, value) =>{
+        board[index] = value;
+        render();
+    }
+    return{
+       render, getGameboard, update
+    }
+})();
+
+
+const createPlayer =(name, mark)=>{
+    return {
+        name,mark
+    }
 }
 
-function createGame(player1, player2){
-    let turn = 1;
-    const getTurnCount = () => turn;
-    const increaseTurnCount = ()=> turn++;
-    const resetTurnCount = () => turn = 0;
-    let gameBoard = (function (){
-        let row1 = {1:"", 2:"",3:""};
-        let row2 = {1:"", 2:"",3:""};
-        let row3 = {1:"", 2:"",3:""};
-        return {row1, row2, row3};
-    })();
-    function evalTurn(){
-        currentTurn = getTurnCount();
-        if (currentTurn % 2 != 0){
-            return player1;
-        }else{
-            return player2;
-        }
+const Game =(()=>{
+    let players = [];
+    let currentPlayerIndex = 0;
+    let gameOver;
+    const start = () =>{
+        players = [
+            createPlayer(document.querySelector("#player1").value, "X"),
+            createPlayer(document.querySelector("#player2").value, "O")
+        ]
+        gameOver = false;
+        Gameboard.render();
+        const squares = document.querySelectorAll(".square");
+        squares.forEach((square) =>{
+            square.addEventListener("click", clickEventHandler);
+        })
     }
-    function playRound(currentPlayer){  
-            let row = parseInt(prompt(`${currentPlayer.playerName}, In what row would you like to place your mark?`));
-            let col = parseInt(prompt(`${currentPlayer.playerName}, In what column would you like to place your mark?`));
-        if (row === 1){
-            gameBoard.row1[col] = currentPlayer.playerMark;
+    const clickEventHandler = (event) =>{
+        if(gameOver){
+            return;
         }
-        else if (row === 2){
-            gameBoard.row2[col] = currentPlayer.playerMark;
+        let index = parseInt(event.target.id.split("-")[1]);
+        if (Gameboard.getGameboard()[index]!==""){
+            return
         }
-        else if (row === 3){
-            gameBoard.row3[col] = currentPlayer.playerMark;
+        Gameboard.update(index, players[currentPlayerIndex].mark);
+        if (checkForWin(Gameboard.getGameboard(), players[currentPlayerIndex.mark])){
+            gameOver = true;
+            displayController.renderMessage(`${players[currentPlayerIndex].name} wins!`);
+        }else if (checkForTie(Gameboard.getGameboard())){
+            gameOver = true;
+            displayController.renderMessage("Tie Game");
         }
-        console.table(gameBoard.row1);
-        console.table(gameBoard.row2);
-        console.table(gameBoard.row3);
-        increaseTurnCount();
+        currentPlayerIndex = currentPlayerIndex === 0? 1: 0;
     }
-    function playGame(){
-        let gameOn = true;
-        while(gameOn){
-            let playerTurn = evalTurn();
-            playRound(playerTurn);
-            if (gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row1[2] && gameBoard.row1[3]=== gameBoard.row1[2]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row2[1] !="" && gameBoard.row2[1]=== gameBoard.row2[2] && gameBoard.row2[3]=== gameBoard.row2[2]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row3[1] !="" && gameBoard.row3[1]=== gameBoard.row3[2] && gameBoard.row3[3]=== gameBoard.row3[2]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row2[1] && gameBoard.row2[1]=== gameBoard.row3[1]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row1[2] !="" && gameBoard.row1[2]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[2]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row1[3] !="" && gameBoard.row1[3]=== gameBoard.row2[3] && gameBoard.row2[3]=== gameBoard.row3[3]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row1[1] !="" && gameBoard.row1[1]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[3]){
-                gameOn = false;
-                console.log("We have a WINNER");
-            }else if(gameBoard.row1[3] !="" && gameBoard.row1[3]=== gameBoard.row2[2] && gameBoard.row2[2]=== gameBoard.row3[1]){
-                gameOn = false;
-                console.log("We have a WINNER");               
-            }else if (turn >9){
-                console.log("Tie Game");
-                resetTurnCount();
-            }
-}increaseTurnCount();
-    if(!gameOn){
-        let winner = evalTurn()
-        winner.addWin()
+    const restart =()=>{
+        for(i=0; i<9; i++){
+            Gameboard.update(i, "");
+        }
+        Gameboard.render(); 
+        displayController.renderMessage("X Tick-Tack-Toe O")
+
+        }
+    return{
+        start, restart, clickEventHandler
+    }
+})();
+
+function checkForWin(board){
+    let winningCombinations =[
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ]
+    for (i=0; i<winningCombinations.length; i++){
+        const [a, b, c] = winningCombinations[i];
+        if (board[a] !== "" && board[a] === board[b] && board[b] === board[c]){
+            return true;
+        }
     }
 }
-playGame();
+function checkForTie(board){
+    return board.every(cell => cell!=="");
 }
 
-let steve = createUser("Steve", "X");
-let nick = createUser("Nick", "O");
+const startButton = document.querySelector(".start-button");
+startButton.addEventListener("click", ()=>{
+    Game.start();
+})
+
+const resetButton = document.querySelector(".new-game-button");
+resetButton.addEventListener("click", ()=>{
+    Game.restart();
+})
